@@ -1,0 +1,52 @@
+syntax = "proto3";
+package main;
+option go_package = ".;surveyservice";
+
+message Option {
+  uint32 optionNum = 1;
+  string option = 2;
+}
+
+message Question {
+  uint32 surveyID = 1;
+  uint32 questionNum = 2;
+  string description = 3;
+  enum Type {
+    TEXT = 0;
+    MCQ = 1;
+    MULTI_SELECT = 2;
+  }
+  Type type = 4;
+  enum Graph {
+    BAR = 0;
+    LINE = 1;
+    WORD_MAP = 2;
+    PIE = 3;
+  }
+  Graph graph = 5;
+  repeated Option options = 6;
+  uint32 correct = 7;
+}
+
+message SurveyID {
+  uint32 surveyID = 1;
+}
+
+message SurveyDesc {
+  string description = 2;
+}
+
+message EmptyMessage {}
+
+message Response {
+  uint32 surveyID = 1;
+  uint32 questionNum = 2;
+  string response = 3;
+}
+
+service SurveyService {
+    rpc CreateSurvey(SurveyDesc) returns(SurveyID) {};
+    rpc SendQuestions(stream Question) returns(EmptyMessage) {};
+    rpc SendResponse(stream Response) returns(EmptyMessage) {};
+    rpc ReceiveResponse(SurveyID) returns(stream Response) {};
+}
